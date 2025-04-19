@@ -200,12 +200,9 @@ def status(rpc: RPC = Depends(get_rpc)):
 def trades(
     limit: int = Query(500, ge=1, description="Maximum number of different trades to return data"),
     offset: int = Query(0, ge=0, description="Number of trades to skip for pagination"),
-    order_by_id: bool = Query(
-        True, description="Sort trades by id (default: True). If False, sorts by latest timestamp"
-    ),
     rpc: RPC = Depends(get_rpc),
 ):
-    return rpc._rpc_trade_history(limit, offset=offset, order_by_id=order_by_id)
+    return rpc._rpc_trade_history(limit, offset=offset, order_by_id=True)
 
 
 @router.get("/trade/{tradeid}", response_model=OpenTradeSchema, tags=["info", "trading"])
@@ -372,11 +369,10 @@ def stop(rpc: RPC = Depends(get_rpc)):
     return rpc._rpc_stop()
 
 
-@router.post("/pause", response_model=StatusMsg, tags=["botcontrol"])
 @router.post("/stopentry", response_model=StatusMsg, tags=["botcontrol"])
 @router.post("/stopbuy", response_model=StatusMsg, tags=["botcontrol"])
-def pause(rpc: RPC = Depends(get_rpc)):
-    return rpc._rpc_pause()
+def stop_buy(rpc: RPC = Depends(get_rpc)):
+    return rpc._rpc_stopentry()
 
 
 @router.post("/reload_config", response_model=StatusMsg, tags=["botcontrol"])

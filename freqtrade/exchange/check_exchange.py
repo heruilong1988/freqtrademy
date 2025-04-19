@@ -30,6 +30,8 @@ def check_exchange(config: Config, check_for_bad: bool = True) -> bool:
         return True
     logger.info("Checking exchange...")
 
+    exchange_list_length = len(config.get("exchangeList", []))
+
     exchange = config.get("exchange", {}).get("name", "").lower()
     if not exchange:
         raise OperationalException(

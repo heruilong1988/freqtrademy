@@ -68,21 +68,11 @@ def test_text_table_bt_results(capsys):
             "profit_ratio": [0.1, 0.2, -0.05],
             "profit_abs": [0.2, 0.4, -0.1],
             "trade_duration": [10, 30, 20],
-            "close_date": [
-                dt_utc(2017, 11, 14, 21, 35, 00),
-                dt_utc(2017, 11, 14, 22, 10, 00),
-                dt_utc(2017, 11, 14, 22, 43, 00),
-            ],
         }
     )
 
     pair_results = generate_pair_metrics(
-        ["ETH/BTC"],
-        stake_currency="BTC",
-        starting_balance=4,
-        results=results,
-        min_date=dt_from_ts(1510688220),
-        max_date=dt_from_ts(1510700340),
+        ["ETH/BTC"], stake_currency="BTC", starting_balance=4, results=results
     )
     text_table_bt_results(pair_results, stake_currency="BTC", title="title")
     text = capsys.readouterr().out
@@ -430,10 +420,6 @@ def test_generate_pair_metrics():
             "profit_ratio": [0.1, 0.2],
             "profit_abs": [0.2, 0.4],
             "trade_duration": [10, 30],
-            "close_date": [
-                dt_utc(2017, 11, 14, 21, 35, 00),
-                dt_utc(2017, 11, 14, 22, 10, 00),
-            ],
             "wins": [2, 0],
             "draws": [0, 0],
             "losses": [0, 0],
@@ -441,12 +427,7 @@ def test_generate_pair_metrics():
     )
 
     pair_results = generate_pair_metrics(
-        ["ETH/BTC"],
-        stake_currency="BTC",
-        starting_balance=2,
-        results=results,
-        min_date=dt_from_ts(1510688220),
-        max_date=dt_from_ts(1510700340),
+        ["ETH/BTC"], stake_currency="BTC", starting_balance=2, results=results
     )
     assert isinstance(pair_results, list)
     assert len(pair_results) == 2
@@ -531,11 +512,6 @@ def test_text_table_exit_reason(capsys):
             "profit_ratio": [0.1, 0.2, -0.1],
             "profit_abs": [0.2, 0.4, -0.2],
             "trade_duration": [10, 30, 10],
-            "close_date": [
-                dt_utc(2017, 11, 14, 21, 35, 00),
-                dt_utc(2017, 11, 14, 22, 10, 00),
-                dt_utc(2017, 11, 14, 22, 43, 00),
-            ],
             "wins": [2, 0, 0],
             "draws": [0, 0, 0],
             "losses": [0, 0, 1],
@@ -544,12 +520,7 @@ def test_text_table_exit_reason(capsys):
     )
 
     exit_reason_stats = generate_tag_metrics(
-        "exit_reason",
-        starting_balance=22,
-        results=results,
-        min_date=dt_from_ts(1510688220),
-        max_date=dt_from_ts(1510700340),
-        skip_nan=False,
+        "exit_reason", starting_balance=22, results=results, skip_nan=False
     )
     text_table_tags("exit_tag", exit_reason_stats, "BTC")
     text = capsys.readouterr().out
@@ -579,11 +550,6 @@ def test_generate_sell_reason_stats():
             "profit_ratio": [0.1, 0.2, -0.1],
             "profit_abs": [0.2, 0.4, -0.2],
             "trade_duration": [10, 30, 10],
-            "close_date": [
-                dt_utc(2017, 11, 14, 21, 35, 00),
-                dt_utc(2017, 11, 14, 22, 10, 00),
-                dt_utc(2017, 11, 14, 22, 43, 00),
-            ],
             "wins": [2, 0, 0],
             "draws": [0, 0, 0],
             "losses": [0, 0, 1],
@@ -592,12 +558,7 @@ def test_generate_sell_reason_stats():
     )
 
     exit_reason_stats = generate_tag_metrics(
-        "exit_reason",
-        starting_balance=22,
-        results=results,
-        min_date=dt_from_ts(1510688220),
-        max_date=dt_from_ts(1510700340),
-        skip_nan=False,
+        "exit_reason", starting_balance=22, results=results, skip_nan=False
     )
     roi_result = exit_reason_stats[0]
     assert roi_result["key"] == "roi"

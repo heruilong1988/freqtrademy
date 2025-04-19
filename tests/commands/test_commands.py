@@ -709,36 +709,16 @@ def test_download_and_install_ui(mocker, tmp_path):
 
 def test_get_ui_download_url(mocker):
     response = MagicMock()
-    responses = [
-        [
-            {
-                # Pre-release is ignored
-                "assets_url": "http://whatever.json",
-                "name": "0.0.2",
-                "created_at": "2024-02-01T00:00:00Z",
-                "prerelease": True,
-            },
-            {
-                "assets_url": "http://whatever.json",
-                "name": "0.0.1",
-                "created_at": "2024-01-01T00:00:00Z",
-                "prerelease": False,
-            },
-        ],
-        [{"browser_download_url": "http://download.zip"}],
-    ]
-    response.json = MagicMock(side_effect=responses)
+    response.json = MagicMock(
+        side_effect=[
+            [{"assets_url": "http://whatever.json", "name": "0.0.1"}],
+            [{"browser_download_url": "http://download.zip"}],
+        ]
+    )
     get_mock = mocker.patch("freqtrade.commands.deploy_ui.requests.get", return_value=response)
-    x, last_version = get_ui_download_url(None, False)
+    x, last_version = get_ui_download_url()
     assert get_mock.call_count == 2
     assert last_version == "0.0.1"
-    assert x == "http://download.zip"
-
-    response.json = MagicMock(side_effect=responses)
-    get_mock.reset_mock()
-    x, last_version = get_ui_download_url(None, True)
-    assert get_mock.call_count == 2
-    assert last_version == "0.0.2"
     assert x == "http://download.zip"
 
 
@@ -749,33 +729,29 @@ def test_get_ui_download_url_direct(mocker):
             {
                 "assets_url": "http://whatever.json",
                 "name": "0.0.2",
-                "created_at": "2024-02-01T00:00:00Z",
-                "prerelease": False,
                 "assets": [{"browser_download_url": "http://download22.zip"}],
             },
             {
                 "assets_url": "http://whatever.json",
                 "name": "0.0.1",
-                "created_at": "2024-01-01T00:00:00Z",
-                "prerelease": False,
                 "assets": [{"browser_download_url": "http://download1.zip"}],
             },
         ]
     )
     get_mock = mocker.patch("freqtrade.commands.deploy_ui.requests.get", return_value=response)
-    x, last_version = get_ui_download_url(None, False)
+    x, last_version = get_ui_download_url()
     assert get_mock.call_count == 1
     assert last_version == "0.0.2"
     assert x == "http://download22.zip"
     get_mock.reset_mock()
     response.json.reset_mock()
 
-    x, last_version = get_ui_download_url("0.0.1", False)
+    x, last_version = get_ui_download_url("0.0.1")
     assert last_version == "0.0.1"
     assert x == "http://download1.zip"
 
     with pytest.raises(ValueError, match="UI-Version not found."):
-        x, last_version = get_ui_download_url("0.0.3", False)
+        x, last_version = get_ui_download_url("0.0.3")
 
 
 def test_download_data_keyboardInterrupt(mocker, markets):

@@ -83,8 +83,7 @@ AVAILABLE_CLI_OPTIONS = {
         "-d",
         "--datadir",
         "--data-dir",
-        help="Path to the base directory of the exchange with historical backtesting data. "
-        "To see futures data, use trading-mode additionally.",
+        help="Path to directory with historical backtesting data.",
         metavar="PATH",
     ),
     "user_data_dir": Arg(
@@ -464,7 +463,7 @@ AVAILABLE_CLI_OPTIONS = {
     "format_from_trades": Arg(
         "--format-from",
         help="Source format for data conversion.",
-        choices=[*constants.AVAILABLE_DATAHANDLERS, "kraken_csv"],
+        choices=constants.AVAILABLE_DATAHANDLERS + ["kraken_csv"],
         required=True,
     ),
     "format_from": Arg(
@@ -527,15 +526,6 @@ AVAILABLE_CLI_OPTIONS = {
             "Not specifying this installs the latest version."
         ),
         type=str,
-    ),
-    "ui_prerelease": Arg(
-        "--prerelease",
-        help=(
-            "Install the latest pre-release version of FreqUI. "
-            "This is not recommended for production use."
-        ),
-        action="store_true",
-        default=False,
     ),
     # Templating options
     "template": Arg(

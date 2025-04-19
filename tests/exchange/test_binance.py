@@ -299,7 +299,7 @@ def test_liquidation_price_binance(
 
     def get_maint_ratio(pair_, stake_amount):
         if pair_ != pair:
-            oc = next(c for c in open_trades if c["pair"] == pair_)
+            oc = [c for c in open_trades if c["pair"] == pair_][0]
             return oc["mm_ratio"], oc["maintenance_amt"]
         return mm_ratio, maintenance_amt
 

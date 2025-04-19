@@ -8,6 +8,7 @@ import logging
 from collections import defaultdict
 from copy import deepcopy
 from datetime import datetime, timedelta
+from typing import Any
 
 from numpy import nan
 from pandas import DataFrame
@@ -36,12 +37,7 @@ from freqtrade.exchange import (
     timeframe_to_seconds,
 )
 from freqtrade.exchange.exchange import Exchange
-from freqtrade.ft_types import (
-    BacktestContentType,
-    BacktestContentTypeIcomplete,
-    BacktestResultType,
-    get_BacktestResultType_default,
-)
+from freqtrade.ft_types import BacktestResultType, get_BacktestResultType_default
 from freqtrade.leverage.liquidation_price import update_liquidation_prices
 from freqtrade.mixins import LoggingMixin
 from freqtrade.optimize.backtest_caching import get_strategy_run_id
@@ -123,7 +119,7 @@ class Backtesting:
         config["dry_run"] = True
         self.run_ids: dict[str, str] = {}
         self.strategylist: list[IStrategy] = []
-        self.all_results: dict[str, BacktestContentType] = {}
+        self.all_results: dict[str, dict] = {}
         self.analysis_results: dict[str, dict[str, DataFrame]] = {
             "signals": {},
             "rejected": {},
@@ -364,9 +360,8 @@ class Backtesting:
             )
             # Combine data to avoid combining the data per trade.
             unavailable_pairs = []
-            uses_leverage_tiers = self.exchange.get_option("uses_leverage_tiers", True)
             for pair in self.pairlists.whitelist:
-                if uses_leverage_tiers and pair not in self.exchange._leverage_tiers:
+                if pair not in self.exchange._leverage_tiers:
                     unavailable_pairs.append(pair)
                     continue
 
@@ -1615,9 +1610,7 @@ class Backtesting:
                 yield current_time_det, pair, row, is_last_row, trade_dir
             self.progress.increment()
 
-    def backtest(
-        self, processed: dict, start_date: datetime, end_date: datetime
-    ) -> BacktestContentTypeIcomplete:
+    def backtest(self, processed: dict, start_date: datetime, end_date: datetime) -> dict[str, Any]:
         """
         Implement backtesting functionality
 
